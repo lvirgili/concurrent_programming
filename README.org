@@ -1,0 +1,15 @@
+* Multiplying square matrices using C++11 threads
+  Simple algorithm to multiply two square matrices using threads.
+
+  I used this site for the introduction to C++11 threads:
+  http://solarianprogrammer.com/2011/12/16/cpp-11-thread-tutorial/
+
+  The algorithm itself is in Cormen algorithms book and I assume
+  everywhere that has a magical command to make loops run
+  concurrently.
+
+  The way to find out the number of cores available was found here:
+  http://stackoverflow.com/questions/150355/programmatically-find-the-number-of-cores-on-a-machine
+
+* Compiling
+  To compile the program run make. The executable is called 'matrix'.
