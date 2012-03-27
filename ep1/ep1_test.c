@@ -4,6 +4,7 @@
 #include "ep1_ll.h"
 #include "ep1_io.h"
 #include "ep1_stat.h"
+#include "ep1_ciclista.h"
 
 int main(int argc, char **argv) {
      int flag, i;
@@ -39,5 +40,10 @@ int main(int argc, char **argv) {
           if (s > 80.0) printf("s > 80\n");
      }
      printf("velocidades ok.\n");
-     return 0;
+     cur_ticket = 0;
+     printf("%d\n", fetch_and_add(&cur_ticket,1));
+     printf("%d\n", fetch_and_add(&cur_ticket,1));
+     printf("%d\n", fetch_and_add(&cur_ticket,1));
+     printf("%d\n", fetch_and_add(&cur_ticket,1));
+     printf("%d\n", fetch_and_add(&cur_ticket,1));
 }

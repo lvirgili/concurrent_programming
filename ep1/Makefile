@@ -2,9 +2,9 @@ CC = gcc
 CFLAGS = -Wall -pedantic -std=c99
 LDFLAGS = -lm
 
-OBJS1=ep1_main.o ep1_ll.o ep1_io.o ep1_stat.o
+OBJS1=ep1_main.o ep1_ll.o ep1_io.o ep1_stat.o ep1_ciclista.o
 PROGRAM1=ep1
-TEST=ep1_test.o ep1_ll.o ep1_io.o ep1_stat.o
+TEST=ep1_test.o ep1_ll.o ep1_io.o ep1_stat.o ep1_ciclista.o
 TPROG=test
 
 ep1: $(OBJS1)
