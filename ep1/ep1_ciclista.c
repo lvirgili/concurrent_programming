@@ -3,7 +3,7 @@
 /* Alterado de:
  * http://en.wikipedia.org/wiki/Fetch-and-add#x86_implementation. */
 
-inline int fetch_and_add(int *variable, int value){
+inline int fetch_and_add(unsigned long int *variable, unsigned long int value){
      __asm__ volatile(
           "lock; xaddl %%eax, %2;"
           :"=a" (value)                   //Output
