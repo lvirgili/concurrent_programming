@@ -6,9 +6,13 @@
 #include "ep1_stat.h"
 #include "ep1_ciclista.h"
 
+#define _OPEN_THREADS
+
 int main(int argc, char **argv) {
      int flag, i;
      double d, s;
+     pthread_attr_t attr;
+     pthread_t ciclistasid[3];
      if (argc != 2) {
           printf("Uso: ./ep arquivo_de_entrada.txt\n");
           return 0;
@@ -41,9 +45,11 @@ int main(int argc, char **argv) {
      }
      printf("velocidades ok.\n");
      cur_ticket = 0;
-     printf("%d\n", fetch_and_add(&cur_ticket,1));
-     printf("%d\n", fetch_and_add(&cur_ticket,1));
-     printf("%d\n", fetch_and_add(&cur_ticket,1));
-     printf("%d\n", fetch_and_add(&cur_ticket,1));
-     printf("%d\n", fetch_and_add(&cur_ticket,1));
+     next_ticket = 0;
+     pthread_attr_init(&attr);
+     pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
+     for (i = 0; i < 3; ++i) {
+          pthread_create(&ciclistasid[i], &attr, ciclista, (void *)i);
+     }
+     pthread_exit(NULL);
 }
