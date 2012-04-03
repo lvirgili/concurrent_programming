@@ -13,6 +13,7 @@ int main(int argc, char **argv) {
      double d, s;
      pthread_attr_t attr;
      pthread_t ciclistasid[3];
+     info *args;
      if (argc != 2) {
           printf("Uso: ./ep arquivo_de_entrada.txt\n");
           return 0;
@@ -49,7 +50,12 @@ int main(int argc, char **argv) {
      pthread_attr_init(&attr);
      pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
      for (i = 0; i < 3; ++i) {
-          pthread_create(&ciclistasid[i], &attr, ciclista, (void *)i);
+          args = (info *)malloc(sizeof(*args));
+          args->velocidades[0] = rand_velocity(30,5);
+          args->velocidades[1] = rand_velocity(50,10);
+          args->velocidades[2] = rand_velocity(60,5);
+          args->tid = i;
+          pthread_create(&ciclistasid[i], &attr, ciclista, (void *)args);
      }
      pthread_exit(NULL);
 }

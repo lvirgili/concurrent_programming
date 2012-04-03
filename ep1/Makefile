@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -pedantic -pthread -std=c99
+CFLAGS = -Wall -pedantic -pthread -std=c99 -D__USE_GNU
 LDFLAGS = -lm
 
 OBJS1=ep1_main.o ep1_ll.o ep1_io.o ep1_stat.o ep1_ciclista.o
