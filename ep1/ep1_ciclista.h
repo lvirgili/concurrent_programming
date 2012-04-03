@@ -13,6 +13,12 @@ typedef struct info {
 unsigned long int cur_ticket;
 unsigned long int next_ticket;
 
+pthread_mutex_t barreira;
+pthread_cond_t go;
+int num_ciclistas;
+int num_arrived;
+
 int fetch_and_add(unsigned long int *variable, unsigned long int value);
+void bar();
 void *ciclista(void *arg);
 #endif

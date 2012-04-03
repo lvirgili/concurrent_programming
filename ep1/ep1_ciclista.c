@@ -12,6 +12,18 @@ inline int fetch_and_add(unsigned long int *variable, unsigned long int value){
      return value;
 }
 
+void bar() {
+     pthread_mutex_lock(&barreira);
+     ++num_arrived;
+     if (num_arrived < num_ciclistas) {
+          pthread_cond_wait(&go, &barreira);
+     } else {
+          num_arrived = 0;
+          pthread_cond_broadcast(&go);
+     }
+     pthread_mutex_unlock(&barreira);
+}
+
 void *ciclista(void *arg) {
      info *tinfo = (info *)arg;
      int i, tid;
@@ -25,10 +37,11 @@ void *ciclista(void *arg) {
      for (i = 0; i < 2; ++i) {
           my_ticket = fetch_and_add(&next_ticket,1);
           while (my_ticket != cur_ticket) {
-               sched_yield();
+               sched_yield(); /* pthread_yield() warning? */
           }
-          printf("thead %d has velocities S = %lf, P = %lf, D = %lf\n", tid, v[0], v[1], v[2]);
+          printf("thead %d has velocities S = %lf, P = %lf, D = %lf in turn %d\n", tid, v[0], v[1], v[2], i);
           ++cur_ticket;
+          bar();
      }
      pthread_exit(NULL);
 }

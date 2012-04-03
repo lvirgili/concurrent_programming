@@ -49,6 +49,9 @@ int main(int argc, char **argv) {
      next_ticket = 0;
      pthread_attr_init(&attr);
      pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
+     pthread_mutex_init(&barreira, NULL);
+     pthread_cond_init(&go, NULL);
+     num_ciclistas = 3;
      for (i = 0; i < 3; ++i) {
           args = (info *)malloc(sizeof(*args));
           args->velocidades[0] = rand_velocity(30,5);
