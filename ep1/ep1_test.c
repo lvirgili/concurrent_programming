@@ -10,10 +10,11 @@
 
 int main(int argc, char **argv) {
      int flag, i;
-     double d, s;
+     double de, s;
      pthread_attr_t attr;
      pthread_t ciclistasid[3];
      info *args;
+
      if (argc != 2) {
           printf("Uso: ./ep arquivo_de_entrada.txt\n");
           return 0;
@@ -23,6 +24,12 @@ int main(int argc, char **argv) {
      if (flag == -1) {
           printf("O arquivo %s nao pode ser lido.\n", argv[1]);
           return 0;
+     }
+     tamanho_estrada = d;
+     largura_estrada = n;
+     minuto = 0;
+     if (alocar_coisas() != 0) {
+          exit(-1);
      }
      print_vars();
      ll_print();
@@ -39,9 +46,9 @@ int main(int argc, char **argv) {
           break;
      }
      for (i = 0; i <= 10000; ++i) {
-          d = rand_velocity(60,5);
+          de = rand_velocity(60,5);
           s = rand_velocity(30,5);
-          if (d < 20.0) printf("d < 20\n");
+          if (de < 20.0) printf("de < 20\n");
           if (s > 80.0) printf("s > 80\n");
      }
      printf("velocidades ok.\n");

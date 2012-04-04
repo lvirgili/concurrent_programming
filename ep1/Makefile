@@ -17,4 +17,4 @@ test: $(TEST)
 	$(CC) $(CFLAGS) -c $< $(LDFLAGS)
 
 clean:
-	-rm -f *.o $(PROGRAM1) $(TPROG) *~
+	-rm -f *.o $(PROGRAM1) $(TPROG) *~ saida.txt
