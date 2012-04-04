@@ -34,7 +34,7 @@ void *ciclista(void *arg) {
      v[2] = tinfo->velocidades[2];
      free(tinfo);
      unsigned long my_ticket;
-     for (i = 0; i < 2; ++i) {
+     for (i = 0; i < 5; ++i) {
           my_ticket = fetch_and_add(&next_ticket,1);
           while (my_ticket != cur_ticket) {
                sched_yield(); /* pthread_yield() warning? */
