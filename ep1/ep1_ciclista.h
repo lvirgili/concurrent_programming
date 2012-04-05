@@ -8,6 +8,7 @@
 typedef struct info {
      double velocidades[3];
      int tid;
+     double ret[3];
 } info;
 
 int **estrada;

@@ -80,7 +80,6 @@ void *ciclista(void *arg) {
      v[0] = tinfo->velocidades[0];
      v[1] = tinfo->velocidades[1];
      v[2] = tinfo->velocidades[2];
-     free(tinfo);
      unsigned long my_ticket;
      for (i = 0; i < 5; ++i) {
           my_ticket = fetch_and_add(&next_ticket,1);
@@ -91,5 +90,8 @@ void *ciclista(void *arg) {
           ++cur_ticket;
           bar();
      }
+     tinfo->ret[0] = (double)tid;
+     tinfo->ret[1] = (double)tid;
+     tinfo->ret[2] = (double)tid;
      pthread_exit(NULL);
 }

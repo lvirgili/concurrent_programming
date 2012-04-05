@@ -10,10 +10,10 @@
 
 int main(int argc, char **argv) {
      int flag, i;
-     double de, s;
      pthread_attr_t attr;
-     pthread_t ciclistasid[3];
-     info *args;
+     pthread_t *ciclistasid;
+     info **args;
+     int *ret;
 
      if (argc != 2) {
           printf("Uso: ./ep arquivo_de_entrada.txt\n");
@@ -45,27 +45,38 @@ int main(int argc, char **argv) {
           printf("Velocidades aleatorias:\nD: %lf\nP: %lf\nS: %lf\n", rand_velocity(60,5),rand_velocity(50,10),rand_velocity(30,5));
           break;
      }
-     for (i = 0; i <= 10000; ++i) {
-          de = rand_velocity(60,5);
-          s = rand_velocity(30,5);
-          if (de < 20.0) printf("de < 20\n");
-          if (s > 80.0) printf("s > 80\n");
+     ciclistasid = (pthread_t *)malloc(m*sizeof(pthread_t));
+     args = (info **)malloc(m*sizeof(info));
+     ret = (int *)malloc(sizeof(int) * m);
+     printf("========== Informacoes sobre os ciclistas: ==========\n");
+     for (i = 0; i < m; ++i) {
+          args[i] = (info *)malloc(sizeof(info));
+          args[i]->velocidades[0] = rand_velocity(30,5);
+          args[i]->velocidades[1] = rand_velocity(50,10);
+          args[i]->velocidades[2] = rand_velocity(60,5);
+          args[i]->tid = i;
+          printf("O ciclista %d tem velocidades: S = %lf, P = %lf, D = %lf\n",
+                 args[i]->tid, args[i]->velocidades[0], args[i]->velocidades[1], args[i]->velocidades[2]);
      }
-     printf("velocidades ok.\n");
+     printf("========== Inicio da simulacao. ==========\n");
      cur_ticket = 0;
      next_ticket = 0;
      pthread_attr_init(&attr);
      pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
      pthread_mutex_init(&barreira, NULL);
      pthread_cond_init(&go, NULL);
-     num_ciclistas = 3;
-     for (i = 0; i < 3; ++i) {
-          args = (info *)malloc(sizeof(*args));
-          args->velocidades[0] = rand_velocity(30,5);
-          args->velocidades[1] = rand_velocity(50,10);
-          args->velocidades[2] = rand_velocity(60,5);
-          args->tid = i;
-          pthread_create(&ciclistasid[i], &attr, ciclista, (void *)args);
+     num_ciclistas = m;
+     for (i = 0; i < m; ++i) {
+          pthread_create(&ciclistasid[i], &attr, ciclista, (void *)args[i]);
      }
+     for (i = 0; i < m; ++i) {
+          pthread_join(ciclistasid[i], NULL);
+          printf("a thread %d retornou %lf, %lf, %lf.\n", i, args[i]->ret[0], args[i]->ret[1], args[i]->ret[2]);
+     }
+     for (i = 0; i < m; ++i) {
+          free(args[i]);
+     }
+     free(args);
+     printf("a main acabou.\n");
      pthread_exit(NULL);
 }
