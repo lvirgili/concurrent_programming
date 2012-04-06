@@ -4,6 +4,7 @@
 
 int ll_init() {
      head = NULL;
+     ll_size = 0;
      return 0;
 }
 

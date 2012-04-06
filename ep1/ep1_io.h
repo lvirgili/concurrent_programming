@@ -1,6 +1,9 @@
 #ifndef IO_H
 #define IO_H
 
+#include "ep1_ll.h"
+#include <stdio.h>
+
 /* Variaveis do problema. */
 int m; /* Numero de ciclistas. */
 int n; /* Largura da pista em numero de ciclistas. */

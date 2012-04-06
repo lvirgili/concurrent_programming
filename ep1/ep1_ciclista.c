@@ -25,7 +25,6 @@ int alocar_coisas() {
                estrada[i][j] = -1;
           }
      }
-
      return 0;
 }
 
@@ -42,6 +41,14 @@ void print_info() {
           fprintf(f, "\n");
      }
      fclose(f);
+}
+
+int change_trecho(int cur_trecho, double km, double min_move) {
+     double target = km + min_move;
+     if (target > trechos[cur_trecho].fim) {
+          return 1;
+     }
+     return 0;
 }
 
 /* Alterado de:
@@ -71,23 +78,70 @@ void bar() {
 }
 
 /* As threads usam o algoritmo da padaria para controlar quem pode
- * acessar o vetor estrada e andar. */
+ * acessar o vetor estrada e andar.  Quando todo mundo teve a
+ * oportunidade de andar a barreira deixa comecar de novo.
+ */
 void *ciclista(void *arg) {
-     info *tinfo = (info *)arg;
-     int i, tid;
-     double v[3];
-     tid = tinfo->tid;
-     v[0] = tinfo->velocidades[0];
-     v[1] = tinfo->velocidades[1];
-     v[2] = tinfo->velocidades[2];
+     int i, j, tid, cur_km, cur_position, pos, cur_trecho, pontuacoes[3];
+     double v[3], km, move, rest, tempo;
      unsigned long my_ticket;
-     for (i = 0; i < 5; ++i) {
+     info *tinfo = (info *)arg;
+     km = 0;
+     cur_km = 0;
+     cur_trecho = 0;
+     cur_position = -1;
+     tid = tinfo->tid;
+     pontuacoes[T_DESCIDA] = pontuacoes[T_PLANO] = pontuacoes[T_SUBIDA] = 0;
+     v[T_DESCIDA] = tinfo->velocidades[0];
+     v[T_PLANO] = tinfo->velocidades[1];
+     v[T_SUBIDA] = tinfo->velocidades[2];
+     while (km < tamanho_estrada) {
+          /* Thread pega um ticket. */
           my_ticket = fetch_and_add(&next_ticket,1);
+          /* Espera a vez dela. Se nao for, ela abdica do seu tempo. */
           while (my_ticket != cur_ticket) {
                sched_yield(); /* pthread_yield() warning? */
           }
-          printf("thead %d has velocities S = %lf, P = %lf, D = %lf in turn %d\n", tid, v[0], v[1], v[2], minuto);
+          /* A partir daqui comeca a secao critica. */
+          move = v[trechos[cur_trecho].tipo] / 3600;
+          if (change_trecho(cur_trecho, km, move) == 0) {
+               /* Aqui o infeliz ve se pode andar e faz o que precisa */
+               for (i = ceil(cur_km); i <= floor(cur_km+move) && i < tamanho_estrada; ++i) {
+                    if (next_position[i] < num_ciclistas) {
+                         /* Pode andar para o proximo km. */
+                         if (cur_position != -1) {
+                              for (j = 0; j < largura_estrada; ++j) {
+                                   if (estrada[cur_position][j] == tid) {
+                                        /* Remove o identificador. */
+                                        estrada[cur_position][j] = -1;
+                                        --next_position[cur_position];
+                                        break;
+                                   }
+                              }
+                         }
+                         for (j = 0; j < largura_estrada; ++j) {
+                              if (estrada[i][j] == -1) {
+                                   /* Armazena o identificador no km seguinte. */
+                                   estrada[i][j] = tid;
+                                   ++next_position[i];
+                                   ++cur_position;
+                                   break;
+                              }
+                         }
+                    } else {
+                         /* Tem gente na frente, entao nao anda mais. */
+                         break;
+                    }
+               }
+          } else {
+               rest = trechos[cur_trecho].fim - km;
+               tempo = rest / v[trechos[cur_trecho].tipo];
+               /* Aqui ele ve se pode mudar de trecho e faz o que precisa. */
+          }
+          km += 5;
+          /* Protocolo de saida, incrementar o ticket. */
           ++cur_ticket;
+          /* A barreira que sincroniza as threads. */
           bar();
      }
      tinfo->ret[0] = (double)tid;

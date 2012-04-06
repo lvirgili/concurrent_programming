@@ -1,6 +1,4 @@
 #include "ep1_io.h"
-#include "ep1_ll.h"
-#include <stdio.h>
 
 int read_file(char *path) {
      FILE *f;

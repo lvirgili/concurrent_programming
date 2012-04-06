@@ -8,12 +8,35 @@
 
 #define _OPEN_THREADS
 
+void ll_trechos(trecho *trechos) {
+     struct node *p = head;
+     int i = 0, last = 0;
+     while (p != NULL) {
+          switch(p->t_trecho) {
+          case 'D':
+               trechos[i].tipo = T_DESCIDA;
+               break;
+          case 'P':
+               trechos[i].tipo = T_PLANO;
+               break;
+          case 'S':
+               trechos[i].tipo = T_SUBIDA;
+               break;
+          }
+          trechos[i].inicio = last;
+          trechos[i].fim = trechos[i].inicio + p->k;
+          trechos[i].ja_passaram = 0;
+          last = trechos[i].fim;
+          p = p->p;
+          ++i;
+     }
+}
+
 int main(int argc, char **argv) {
      int flag, i;
      pthread_attr_t attr;
      pthread_t *ciclistasid;
      info **args;
-     int *ret;
 
      if (argc != 2) {
           printf("Uso: ./ep arquivo_de_entrada.txt\n");
@@ -33,7 +56,7 @@ int main(int argc, char **argv) {
      }
      print_vars();
      ll_print();
-     ll_clean();
+
      printf("STATS:\n");
      switch (v) {
      case 'U':
@@ -45,9 +68,14 @@ int main(int argc, char **argv) {
           printf("Velocidades aleatorias:\nD: %lf\nP: %lf\nS: %lf\n", rand_velocity(60,5),rand_velocity(50,10),rand_velocity(30,5));
           break;
      }
+     trechos = (trecho *)malloc(m*sizeof(trecho));
+     ll_trechos(trechos);
+     for (i = 0; i < ll_size; ++i) {
+          printf("Trecho %d: Tipo %d, inicio %d, fim %d\n", i, trechos[i].tipo, trechos[i].inicio, trechos[i].fim);
+     }
      ciclistasid = (pthread_t *)malloc(m*sizeof(pthread_t));
      args = (info **)malloc(m*sizeof(info));
-     ret = (int *)malloc(sizeof(int) * m);
+     printf("Fim das alocacoes\n");
      printf("========== Informacoes sobre os ciclistas: ==========\n");
      for (i = 0; i < m; ++i) {
           args[i] = (info *)malloc(sizeof(info));
@@ -58,6 +86,7 @@ int main(int argc, char **argv) {
           printf("O ciclista %d tem velocidades: S = %lf, P = %lf, D = %lf\n",
                  args[i]->tid, args[i]->velocidades[0], args[i]->velocidades[1], args[i]->velocidades[2]);
      }
+     ll_clean();
      printf("========== Inicio da simulacao. ==========\n");
      cur_ticket = 0;
      next_ticket = 0;

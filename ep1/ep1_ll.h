@@ -9,8 +9,8 @@ struct node {
      struct node *p; /* Proximo trecho. */
 };
 
-struct node *head;
 int ll_size; /* Armazena quantos nos existem na lista. */
+struct node *head;
 
 int ll_init();
 int ll_add(char t, int dist);
