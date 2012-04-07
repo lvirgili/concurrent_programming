@@ -41,6 +41,8 @@ int num_ciclistas;
 int num_arrived;
 int tamanho_estrada;
 int largura_estrada;
+int fim;
+int chegaram;
 int minuto;
 
 int fetch_and_add(unsigned long int *variable, unsigned long int value);

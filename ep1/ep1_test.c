@@ -68,20 +68,25 @@ int main(int argc, char **argv) {
           printf("Velocidades aleatorias:\nD: %lf\nP: %lf\nS: %lf\n", rand_velocity(60,5),rand_velocity(50,10),rand_velocity(30,5));
           break;
      }
-     trechos = (trecho *)malloc(m*sizeof(trecho));
+     trechos = (trecho *)malloc(ll_size*sizeof(trecho));
      ll_trechos(trechos);
      for (i = 0; i < ll_size; ++i) {
           printf("Trecho %d: Tipo %d, inicio %d, fim %d\n", i, trechos[i].tipo, trechos[i].inicio, trechos[i].fim);
      }
      ciclistasid = (pthread_t *)malloc(m*sizeof(pthread_t));
      args = (info **)malloc(m*sizeof(info));
-     printf("Fim das alocacoes\n");
      printf("========== Informacoes sobre os ciclistas: ==========\n");
      for (i = 0; i < m; ++i) {
           args[i] = (info *)malloc(sizeof(info));
-          args[i]->velocidades[0] = rand_velocity(30,5);
-          args[i]->velocidades[1] = rand_velocity(50,10);
-          args[i]->velocidades[2] = rand_velocity(60,5);
+          if (v == 'A') {
+               args[i]->velocidades[0] = rand_velocity(30,5);
+               args[i]->velocidades[1] = rand_velocity(50,10);
+               args[i]->velocidades[2] = rand_velocity(60,5);
+          } else {
+               args[i]->velocidades[0] = 50;
+               args[i]->velocidades[1] = 50;
+               args[i]->velocidades[2] = 50;
+          }
           args[i]->tid = i;
           printf("O ciclista %d tem velocidades: S = %lf, P = %lf, D = %lf\n",
                  args[i]->tid, args[i]->velocidades[0], args[i]->velocidades[1], args[i]->velocidades[2]);
@@ -90,6 +95,8 @@ int main(int argc, char **argv) {
      printf("========== Inicio da simulacao. ==========\n");
      cur_ticket = 0;
      next_ticket = 0;
+     fim = 0;
+     chegaram = 0;
      pthread_attr_init(&attr);
      pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
      pthread_mutex_init(&barreira, NULL);
