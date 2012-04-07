@@ -16,7 +16,7 @@
 typedef struct info {
      double velocidades[3];
      int tid;
-     double ret[3];
+     int ret[4];
 } info;
 
 typedef struct trecho {
@@ -24,6 +24,7 @@ typedef struct trecho {
      int inicio;
      int fim;
      int ja_passaram;
+     int quem_passou[3];
 } trecho;
 
 trecho *trechos;
@@ -45,10 +46,9 @@ int fim;
 int chegaram;
 int minuto;
 
-int fetch_and_add(unsigned long int *variable, unsigned long int value);
-void bar();
+/* int fetch_and_add(unsigned long int *variable, unsigned long int value); */
+/* void bar(); */
 void *ciclista(void *arg);
 int alocar_coisas();
-void print_info();
-int change_trecho(int cur_trecho, double km, double min_move);
+/* void print_info(); */
 #endif

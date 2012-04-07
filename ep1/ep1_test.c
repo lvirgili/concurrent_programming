@@ -33,7 +33,7 @@ void ll_trechos(trecho *trechos) {
 }
 
 int main(int argc, char **argv) {
-     int flag, i;
+     int flag, i, num_trechos;
      pthread_attr_t attr;
      pthread_t *ciclistasid;
      info **args;
@@ -50,6 +50,7 @@ int main(int argc, char **argv) {
      }
      tamanho_estrada = d;
      largura_estrada = n;
+     printf("largura %d\n", largura_estrada);
      minuto = 0;
      if (alocar_coisas() != 0) {
           exit(-1);
@@ -68,6 +69,7 @@ int main(int argc, char **argv) {
           printf("Velocidades aleatorias:\nD: %lf\nP: %lf\nS: %lf\n", rand_velocity(60,5),rand_velocity(50,10),rand_velocity(30,5));
           break;
      }
+     num_trechos = ll_size;
      trechos = (trecho *)malloc(ll_size*sizeof(trecho));
      ll_trechos(trechos);
      for (i = 0; i < ll_size; ++i) {
@@ -107,7 +109,11 @@ int main(int argc, char **argv) {
      }
      for (i = 0; i < m; ++i) {
           pthread_join(ciclistasid[i], NULL);
-          printf("a thread %d retornou %lf, %lf, %lf.\n", i, args[i]->ret[0], args[i]->ret[1], args[i]->ret[2]);
+          printf("a thread %d retornou %d, %d, %d, %d.\n", i, args[i]->ret[0], args[i]->ret[1], args[i]->ret[2], args[i]->ret[3]);
+     }
+     for (i = 0; i < num_trechos; ++i) {
+          if (trechos[i].tipo != T_DESCIDA)
+               printf("No trecho %d os 3 primeiros foram: %d, %d e %d\n", i, trechos[i].quem_passou[0], trechos[i].quem_passou[1], trechos[i].quem_passou[2]);
      }
      for (i = 0; i < m; ++i) {
           free(args[i]);
