@@ -33,7 +33,7 @@ void ll_trechos(trecho *trechos) {
 }
 
 int main(int argc, char **argv) {
-     int flag, i, num_trechos, j;
+     int flag, i, num_trechos;
      pthread_attr_t attr;
      pthread_t *ciclistasid;
      info **args;
