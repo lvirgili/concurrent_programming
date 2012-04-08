@@ -28,6 +28,8 @@ int alocar_coisas() {
      return 0;
 }
 
+/* Essa funcao imprime as posicoes minuto a minuto no arquivo
+ * "saida.txt". */
 static void print_info() {
      FILE *f;
      int i, j;
@@ -48,6 +50,8 @@ static void print_info() {
      }
 }
 
+/* Essa funcao checa se alguma thread passou por um checkpoint e
+ * retorna quantos pontos ele fez.*/
 static int give_points(trecho *cur_trecho, int cur_position, int tid) {
      int check_pos;
      switch (cur_trecho->tipo) {
@@ -101,7 +105,8 @@ static int give_points(trecho *cur_trecho, int cur_position, int tid) {
 }
 
 /* Alterado de:
- * http://en.wikipedia.org/wiki/Fetch-and-add#x86_implementation. */
+ * http://en.wikipedia.org/wiki/Fetch-and-add#x86_implementation. Utilizado
+ * para controlar a entrada na secao critica. */
 static inline int fetch_and_add(unsigned long int *variable, unsigned long int value){
      __asm__ volatile(
           "lock; xaddl %%eax, %2;"
@@ -111,7 +116,8 @@ static inline int fetch_and_add(unsigned long int *variable, unsigned long int v
      return value;
 }
 
-/* Pag. 248 do livro do Andrews. */
+/* Alterado da p. 248 do livro do Andrews. Essa barreira garante que
+ * todas as threas tenham a chance de rodar a cada minuto. */
 static void bar() {
      pthread_mutex_lock(&barreira);
      ++num_arrived;
@@ -119,7 +125,7 @@ static void bar() {
           pthread_cond_wait(&go, &barreira);
      } else {
           if (chegaram == (num_ciclistas)) {
-               printf("============FIM===========\n");
+               printf("========== Fim da simulacao ==========\n");
                fim = 1;
           } else {
                print_info();
@@ -174,7 +180,6 @@ void *ciclista(void *arg) {
                if (cur_trecho >= 0) {
                     /* A thread ja entrou, agora so vai andar. */
                     move = v[trechos[cur_trecho].tipo] / 60.0;
-                    //if (floor(km+move) < trechos[cur_trecho].fim) {
                     dist = floor(km + move) - floor(km);
                     if (dist == 0) {
                          /* A thread nao vai mudar de km, logo so aumentar o qto ela andou. */
@@ -183,6 +188,7 @@ void *ciclista(void *arg) {
                          for (j = 1; j <= dist; ++j) {
                               /* A thread acabou a corrida? */
                               if ((cur_position+1) == tamanho_estrada) {
+                                   /* Se sim, libera o lugar e retorna suas pontuacoes. */
                                    for (i = 0; i < largura_estrada; ++i) {
                                         if (estrada[cur_position][i] == tid) {
                                              estrada[cur_position][i] = -1;
@@ -190,7 +196,6 @@ void *ciclista(void *arg) {
                                              tinfo->ret[1] = pontuacoes[T_DESCIDA];
                                              tinfo->ret[2] = pontuacoes[T_PLANO];
                                              tinfo->ret[3] = pontuacoes[T_SUBIDA];
-                                             printf("a thread %d saiu no minuto %d estrada %d\n", tid, minuto, estrada[cur_position][i]);
                                              --next_position[cur_position];
                                              break;
                                         }
@@ -223,7 +228,6 @@ void *ciclista(void *arg) {
                                    }
                                    km += move;
                               } else {
-                                   printf("thread %d passou a vez.\n", tid);
                                    break;
                               }
                          }
@@ -236,4 +240,36 @@ void *ciclista(void *arg) {
           bar();
      }
      pthread_exit(NULL);
+}
+
+/* A partir daqui sao as funcoes que fazem as comparacoes para as
+ * camisetas. */
+int compare_time(const void *c1, const void *c2) {
+     int *l1, *l2;
+     l1 = (int *)c1;
+     l2 = (int *)c2;
+     if (l1[1] != l2[1]) {
+          return l1[1] - l2[1];
+     }
+     return l1[0] - l2[0];
+}
+
+int compare_subida(const void *c1, const void *c2) {
+     int *l1, *l2;
+     l1 = (int *)c1;
+     l2 = (int *)c2;
+     if (l1[3] != l2[3]) {
+          return l2[3] - l1[3];
+     }
+     return l1[0] - l2[0];
+}
+
+int compare_plano(const void *c1, const void *c2) {
+     int *l1, *l2;
+     l1 = (int *)c1;
+     l2 = (int *)c2;
+     if (l1[2] != l2[2]) {
+          return l2[2] - l1[2];
+     }
+     return l1[0] - l2[0];
 }

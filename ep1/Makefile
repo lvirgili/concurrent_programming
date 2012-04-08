@@ -16,5 +16,9 @@ test: $(TEST)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< $(LDFLAGS)
 
+relatorio.pdf: relatorio.tex
+	pdflatex relatorio.tex
+
 clean:
-	-rm -f *.o $(PROGRAM1) $(TPROG) *~ saida.txt
+	-rm -f *.o $(PROGRAM1) $(TPROG) *~ saida.txt *.aux *.log
+	-rm -rf auto

@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+/* Inicializa a lista. */
 int ll_init() {
      head = NULL;
      ll_size = 0;
      return 0;
 }
 
+/* Adiciona um noh no fim da lista. */
 int ll_add(char t, int dist) {
      struct node *pos = head;
      int i = 1;
@@ -31,6 +33,7 @@ int ll_add(char t, int dist) {
      return 0;
 }
 
+/* Desaloca a lista. */
 int ll_clean() {
      struct node *aux;
      while (ll_size > 0) {
@@ -42,6 +45,7 @@ int ll_clean() {
      return 0;
 }
 
+/* Imprime a lista. */
 void ll_print() {
      struct node *p = head;
      printf("Size = %d\n", ll_size);

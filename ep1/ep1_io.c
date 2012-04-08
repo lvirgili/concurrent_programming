@@ -1,5 +1,6 @@
 #include "ep1_io.h"
 
+/* Le o arquivo de entrada. */
 int read_file(char *path) {
      FILE *f;
      char t;
@@ -30,6 +31,7 @@ int read_file(char *path) {
      return 0;
 }
 
+/* Imprime as variaveis lidas do arquivo. */
 void print_vars() {
      printf("m = %d\nn = %d\nv = %c\nd = %d\n",m,n,v,d);
 }

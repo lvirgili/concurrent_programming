@@ -8,6 +8,8 @@
 
 #define _OPEN_THREADS
 
+/* Essa funcao le a lista ligada que foi montada na entrada e preenche
+ * o vetor de trechos da prova. */
 void ll_trechos(trecho *trechos) {
      struct node *p = head;
      int i = 0, last = 0;
@@ -33,16 +35,17 @@ void ll_trechos(trecho *trechos) {
 }
 
 int main(int argc, char **argv) {
-     int flag, i, num_trechos, j;
+     int flag, i, num_trechos;
      pthread_attr_t attr;
      pthread_t *ciclistasid;
      info **args;
-     /*int **comps;*/
-
+     /* Le o nome do arquivo de entrada. */
      if (argc != 2) {
           printf("Uso: ./ep arquivo_de_entrada.txt\n");
           return 0;
      }
+     /* A partir daqui a main le o arquivo e faz as alocacoes
+      * necessarias para a simulacao. */
      srand(time(NULL));
      flag = read_file(argv[1]);
      if (flag == -1) {
@@ -51,34 +54,17 @@ int main(int argc, char **argv) {
      }
      tamanho_estrada = d;
      largura_estrada = n;
-     printf("largura %d\n", largura_estrada);
      minuto = 0;
      if (alocar_coisas() != 0) {
           exit(-1);
      }
-     print_vars();
-     ll_print();
-
-     printf("STATS:\n");
-     switch (v) {
-     case 'U':
-     case 'u':
-          printf("Velocidade constante: %lf\n", 50.0);
-          break;
-     case 'A':
-     case 'a':
-          printf("Velocidades aleatorias:\nD: %lf\nP: %lf\nS: %lf\n", rand_velocity(60,5),rand_velocity(50,10),rand_velocity(30,5));
-          break;
-     }
      num_trechos = ll_size;
      trechos = (trecho *)malloc(ll_size*sizeof(trecho));
      ll_trechos(trechos);
-     for (i = 0; i < ll_size; ++i) {
-          printf("Trecho %d: Tipo %d, inicio %d, fim %d\n", i, trechos[i].tipo, trechos[i].inicio, trechos[i].fim);
-     }
      ciclistasid = (pthread_t *)malloc(m*sizeof(pthread_t));
      args = (info **)malloc(m*sizeof(info));
      int comps[m][4];
+     /* Esse loop imprime as velocidades dos ciclistas. */
      printf("========== Informacoes sobre os ciclistas: ==========\n");
      for (i = 0; i < m; ++i) {
           args[i] = (info *)malloc(sizeof(info));
@@ -96,7 +82,9 @@ int main(int argc, char **argv) {
                  args[i]->tid, args[i]->velocidades[0], args[i]->velocidades[1], args[i]->velocidades[2]);
      }
      ll_clean();
-     printf("========== Inicio da simulacao. ==========\n");
+     /* Aqui comeca a simulacao em si. As variaveis de controle sao
+      * setadas e as threas inicializadas. */
+     printf("========== Inicio da simulacao ==========\n");
      cur_ticket = 0;
      next_ticket = 0;
      fim = 0;
@@ -106,44 +94,46 @@ int main(int argc, char **argv) {
      pthread_mutex_init(&barreira, NULL);
      pthread_cond_init(&go, NULL);
      num_ciclistas = m;
+     /* Loop que cria as threads. */
      for (i = 0; i < m; ++i) {
           pthread_create(&ciclistasid[i], &attr, ciclista, (void *)args[i]);
      }
+     /* Aqui a main espera todo mundo acabar e recebe as pontucaoes de
+      * cada ciclista. */
      for (i = 0; i < m; ++i) {
           pthread_join(ciclistasid[i], NULL);
           comps[i][0] = i;
           comps[i][1] = args[i]->ret[0];
           comps[i][2] = args[i]->ret[2];
           comps[i][3] = args[i]->ret[3];
-          /*printf("a thread %d retornou %d, %d, %d, %d.\n", i, args[i]->ret[0], args[i]->ret[1], args[i]->ret[2], args[i]->ret[3]);*/
      }
-     printf("comp antes dos sorts\n");
-     for (i = 0; i < m; ++i) {
-          printf("comps %d tem ret %d %d %d\n", comps[i][0], comps[i][1], comps[i][2], comps[i][3]);
-     }
-     printf("Classificacao por tempo:\n");
+     /* Aqui sao impressos as classificacoes para cada camiseta e
+      * depois as posicoes nos checkpoints. */
+     printf("========== Classificacao \"Camiseta Amarela\" ==========\n");
      qsort(comps, m, 4*sizeof(int), compare_time);
      for (i = 0; i < m; ++i) {
           printf("%do lugar: %d\n", i+1, comps[i][0]);
      }
-     printf("Classificacao por subida:\n");
+     printf("========== Classificacao \"Camiseta Branca com Bolas Vermelhas\" ==========\n");
      qsort(comps, m, 4*sizeof(int), compare_subida);
      for (i = 0; i < m; ++i) {
           printf("%do lugar: %d\n", i+1, comps[i][0]);
      }
-     printf("Classificacao por plano:\n");
+     printf("========== Classificacao \"Camiseta Verde\" ==========\n");
      qsort(comps, m, 4*sizeof(int), compare_plano);
      for (i = 0; i < m; ++i) {
           printf("%do lugar: %d\n", i+1, comps[i][0]);
      }
+     printf("========== Posicoes nos checkpoints ==========\n");
      for (i = 0; i < num_trechos; ++i) {
-          if (trechos[i].tipo != T_DESCIDA)
-               printf("No trecho %d os 3 primeiros foram: %d, %d e %d\n", i, trechos[i].quem_passou[0], trechos[i].quem_passou[1], trechos[i].quem_passou[2]);
+          if (trechos[i].tipo != T_DESCIDA) {
+               printf("Checkpoint %d: %d, %d e %d\n", i, trechos[i].quem_passou[0], trechos[i].quem_passou[1], trechos[i].quem_passou[2]);
+          }
      }
+     /* Libera o que ainda nao tinha sido e acaba. */
      for (i = 0; i < m; ++i) {
           free(args[i]);
      }
      free(args);
-     printf("a main acabou.\n");
-     pthread_exit(NULL);
+     return 0;
 }

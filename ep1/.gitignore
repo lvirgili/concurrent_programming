@@ -1,5 +1,7 @@
+*.tex
 *.pdf
 *.o
 ep1
 test
 saida.txt
+README.txt

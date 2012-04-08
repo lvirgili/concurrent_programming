@@ -8,6 +8,8 @@ static double gen_norm() {
      return (sqrt(-2*log(u1)) * cos(2*M_PI*u2));
 }
 
+/* Gera uma velocidade seguindo uma normal com media media e desvio
+ * padrao desv_pad. */
 double rand_velocity(double media, double desv_pad) {
      double z = gen_norm();
      return (desv_pad*z + media);
