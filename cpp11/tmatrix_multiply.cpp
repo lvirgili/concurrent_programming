@@ -69,7 +69,7 @@ int main() {
      // Divide the matrix in chunks and each chunk is processed
      // independently.
      for (int i = 0; i < (chunks - 1); ++i) {
-          t[i] = thread(multiply_chunk, i * n / chunks, (i+1)* n / chunks);
+          t[i] = thread(multiply_chunk, i * n / chunks, (i+1) * n / chunks);
      }
      // The main chunk.
      multiply_chunk((chunks - 1) * n / chunks, chunks * n / chunks);
