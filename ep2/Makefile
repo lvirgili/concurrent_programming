@@ -2,10 +2,10 @@ CC = g++
 FLAGS = -std=c++0x -Wall -Wfatal-errors
 LMATH = -lm
 
-OBJS = ep2_pq.o main.o
-TARG = test
+OBJS = main.o ep2_io.o
+TARG = ep2
 
-dagmdf: $(OBJS)
+ep2: $(OBJS)
 	$(CC) $(FLAGS) $(OBJS) -o $(TARG) $(LMATH)
 
 %.o: %.cpp
