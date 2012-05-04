@@ -58,7 +58,6 @@ void read_input(int argc, char **argv, int *n, int *nvertex, bool *debug, vector
                bool e; ss >> e;
                adj[0].push_back(e);
           }
-          f.ignore(1024, '\n');
           for (int i = 1; i < *nvertex; ++i) {
                vector<bool> aux; adj.push_back(aux);
                for (int j = 0; j < *nvertex; ++j) {

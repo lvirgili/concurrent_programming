@@ -4,12 +4,26 @@ vector<unsigned long> arrive;
 once_flag flag;
 atomic<int> l(0);
 int nrounds;
+vector<pair<int,int> > limits;
 
-void init(int nthreads) {
+void init(int nthreads, int nvertex) {
+     int block_size = (nvertex - 1) / nthreads;
+     int additions = ((nvertex - 1) % nthreads) - 1;
+     int start = 1;
      for (int i = 0; i < nthreads; ++i) {
           arrive.push_back(0);
+          pair<int,int> aux;
+          limits.push_back(make_pair(start, start + block_size));
+          if (i > additions) {
+               --limits[i].second;
+          }
+          start = limits[i].second + 1;
      }
      nrounds = ceil(log(nthreads) / log(2));
+     cout << "nrounds: " << nrounds << endl;
+     for (unsigned i = 0; i < limits.size(); ++i) {
+          cout << i << ": " << limits[i].first << ' ' << limits[i].second << endl;
+     }
 }
 
 static int power2to(int k) {
@@ -25,7 +39,7 @@ static int power2to(int k) {
 
 
 
-void barrier(int tid, int nthreads) {
+static void barrier(int tid, int nthreads) {
      int sid;
      for (int i = 1; i <= nrounds; ++i) {
           ++arrive[tid];

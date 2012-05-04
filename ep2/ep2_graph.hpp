@@ -9,8 +9,7 @@
 #include <cmath>
 using namespace std;
 
-void init(int nthreads);
-void barrier(int tid);
+void init(int nthreads, int nvertex);
 void test(int tid, int nthreads);
 
 #endif

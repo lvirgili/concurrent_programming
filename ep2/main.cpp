@@ -19,12 +19,11 @@ int main(int argc, char **argv) {
      if (nthreads == 1) {
           nthreads = 2;
      }
-     cout << nthreads << endl;
-     init(nthreads);
-     thread *t;
-     t = new thread[nthreads];
+     cout << "nthreads: " << nthreads << endl;
+     init(nthreads, nvertex);
+     vector<thread> t;
      for (int i = 0; i < nthreads; ++i) {
-          t[i] = thread(test, i, nthreads);
+          t.push_back(thread(test, i, nthreads));
      }
      for (int i = 0; i < nthreads; ++i) {
           t[i].join();
