@@ -10,6 +10,6 @@
 using namespace std;
 
 void init(int nthreads, int nvertex);
-void test(int tid, int nthreads);
+void test(int tid, int nthreads, bool debug);
 
 #endif

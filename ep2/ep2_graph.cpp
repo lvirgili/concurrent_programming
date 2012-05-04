@@ -1,8 +1,9 @@
 #include "ep2_graph.hpp"
 
 vector<unsigned long> arrive;
+vector<int> order;
 once_flag flag;
-atomic<int> l(0);
+atomic<int> l(0), itnumber(0);
 int nrounds;
 vector<pair<int,int> > limits;
 
@@ -40,16 +41,16 @@ static int power2to(int k) {
 
 
 static void barrier(int tid, int nthreads) {
+     while (atomic_fetch_add(&l, 1) > 0) {
+          this_thread::yield();
+     }
+     order.push_back(tid);
+     l.store(0);
      int sid;
      for (int i = 1; i <= nrounds; ++i) {
           ++arrive[tid];
           // Determina quem a thread vai esperar.
           sid = (tid + power2to(i-1)) % nthreads;
-          while (atomic_fetch_add(&l, 1) > 0) {
-               this_thread::yield();
-          }
-          cout << "thread " << tid << " na fase " << i << " esperando " << sid << endl;
-          l.store(0);
           while (arrive[sid] < arrive[tid]) {
                this_thread::yield();
           }
@@ -57,8 +58,26 @@ static void barrier(int tid, int nthreads) {
      //call_once(flag, []() { stage.fetch_add(1); cout << "======= " << stage << " =======\n"; });
 }
 
-void test(int tid, int nthreads) {
-     for (int i = 0; i < 5; ++i) {
+void test(int tid, int nthreads, bool debug) {
+     for (int i = 0; i < 3; ++i) {
+          if (tid == 0 && debug == true) {
+               while (atomic_fetch_add(&l, 1) > 0) {
+                    this_thread::yield();
+               }
+               itnumber.fetch_add(1);
+               cout << "Iteracao " << itnumber << " da barreira: ";
+               l.store(0);
+          }
           barrier(tid, nthreads);
+          if (tid == 0 && debug == true) {
+               while (atomic_fetch_add(&l, 1) > 0) {
+                    this_thread::yield();
+               }
+               for (int i = (itnumber-1)*nthreads; i < (itnumber-1)*nthreads + nthreads; ++i) {
+                    cout << order[i] << ' ';
+               }
+               cout << endl;
+               l.store(0);
+          }
      }
 }
