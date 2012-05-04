@@ -1,8 +1,8 @@
 CC = g++
-FLAGS = -std=c++0x -Wall -Wfatal-errors
+FLAGS = -std=c++0x -Wall -Wfatal-errors -pthread
 LMATH = -lm
 
-OBJS = main.o ep2_io.o
+OBJS = ep2_io.o ep2_graph.o main.o
 TARG = ep2
 
 ep2: $(OBJS)
