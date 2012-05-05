@@ -23,7 +23,8 @@ int main(int argc, char **argv) {
      init(nthreads, nvertex);
      vector<thread> t;
      for (int i = 0; i < nthreads; ++i) {
-          t.push_back(thread(test, i, nthreads, debug));
+          //t.push_back(thread(test, i, nthreads, debug));
+          t.push_back(thread(gen_paths, n, i, nvertex, nthreads, adj, debug));
      }
      for (int i = 0; i < nthreads; ++i) {
           t[i].join();
