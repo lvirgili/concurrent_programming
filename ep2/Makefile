@@ -1,5 +1,5 @@
 CC = g++
-FLAGS = -std=c++0x -Wall -Wfatal-errors -pthread
+FLAGS = -std=c++0x -Wall -pthread -O4
 LMATH = -lm
 
 OBJS = ep2_io.o ep2_graph.o main.o
@@ -11,5 +11,9 @@ ep2: $(OBJS)
 %.o: %.cpp
 	$(CC) $(FLAGS) -c $< $(LMATH)
 
+relatorio.pdf: relatorio.tex
+	pdflatex relatorio.tex
+	pdflatex relatorio.tex
+
 clean:
-	-rm -f *.o $(TARG) *~
+	-rm -f *.o $(TARG) *.aux *.log *~

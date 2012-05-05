@@ -1,5 +1,6 @@
 #include "ep2_io.hpp"
 
+// Funcao que le a entrada.
 void read_input(int argc, char **argv, int *n, int *nvertex, bool *debug, vector<vector<bool> >& adj) {
      int fpos = 0, npos = 0;
      if (argc < 3 || argc > 5) {
