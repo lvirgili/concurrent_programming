@@ -8,7 +8,7 @@ Monitor::Monitor() {
           cout << "[MONITOR] Erro ao criar o semaforo 'entry'.\n";
           exit(-1);
      }
-     _nc = 0;
+     _np = 0;
 }
 
 //Destrutor de um monitor.
@@ -22,10 +22,10 @@ Monitor::~Monitor() {
 
 //Operacao 'empty'.
 //Simplesmente retorna se a fila esta vazia.
-bool Monitor::empty() const {
+void Monitor::empty(bool& ret) {
      sem_wait(entry);
+     ret = fila.empty();
      sem_post(entry);
-     return fila.empty();
 }
 
 //Operacao 'wait'.
@@ -36,7 +36,7 @@ void Monitor::wait(const Passageiro& x) {
 //Operacao 'wait' com rank.
 void Monitor::wait(const int rank, const Passageiro& x) {
      sem_wait(entry);
-     ++_nc;
+     ++_np;
      fila.push(x.tid());
      sem_post(entry);
      sem_wait(priv_sems[x.tid()]);
@@ -45,8 +45,8 @@ void Monitor::wait(const int rank, const Passageiro& x) {
 
 void Monitor::signal() {
      sem_wait(entry);
-     if (_nc > 0) {
-          --_nc;
+     if (_np > 0) {
+          --_np;
           int other_id = fila.top().tid();
           sem_post(priv_sems[other_id]);
      }
@@ -55,9 +55,9 @@ void Monitor::signal() {
 
 void Monitor::signal_all() {
      sem_wait(entry);
-     if (_nc > 0) {
+     if (_np > 0) {
           while (fila.empty() == false) {
-               --_nc;
+               --_np;
                int other_id = fila.top().tid();
                sem_post(priv_sems[other_id]);
                fila.pop();
@@ -68,14 +68,12 @@ void Monitor::signal_all() {
 
 //Operacao 'minrank'.
 //Retorna a prioridade do elemento no comeco da fila.
-int Monitor::minrank() const {
+void Monitor::minrank(int& rank) {
      sem_wait(entry);
-     int rank = 1234;
      if (fila.empty() == true) {
           rank = -1;
      } else {
           rank = fila.top().golden();
      }
      sem_post(entry);
-     return rank;
 }

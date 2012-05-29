@@ -13,15 +13,15 @@ class Monitor {
 private:
      sem_t *entry;
      priority_queue<Passageiro, vector<Passageiro>, comp_passageiro> fila;
-     vector<sem_t *> priv_sems;
-     int _nc;
+     vector<sem_t *> priv_sems; //Semaforos privados dos Passageiros.
+     int _np;
 
-     bool empty() const;
+     void empty(bool&);
      void wait(const Passageiro&);
      void wait(const int, const Passageiro&);
      void signal();
      void signal_all();
-     int minrank() const;
+     void minrank(int&);
 
 public:
      Monitor();
