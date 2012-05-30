@@ -17,6 +17,9 @@ Monitor::~Monitor() {
      for (unsigned i = 0; i < priv_sems.size(); ++i) {
           sem_close(priv_sems[i]);
      }
+     for (unsigned i = 0; i < cars_sems.size(); ++i) {
+          sem_close(cars_sems[i]);
+     }
      sem_close(entry);
 }
 
