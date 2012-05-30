@@ -1,5 +1,4 @@
-#ifndef PASSAGEIRO
-#define PASSAGEIRO
+#pragma once
 
 #include <cstdlib>
 #include <ctime>
@@ -32,5 +31,3 @@ struct comp_passageiro {
           return a.arrive() > b.arrive();
      }
 };
-
-#endif
