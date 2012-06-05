@@ -31,3 +31,9 @@ struct comp_passageiro {
           return a.arrive() > b.arrive();
      }
 };
+
+struct comp_to_print {
+     bool operator()(const Passageiro&a, const Passageiro& b) const {
+          return a.arrive() > b.arrive();
+     }
+};

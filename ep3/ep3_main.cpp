@@ -5,6 +5,21 @@
 #include <ctime>
 using namespace std;
 
+Monitor *mon;
+
+void carro(int cid) {
+     while (true) {
+          mon->carrega(cid);
+          mon->descarrega(cid);
+     }
+}
+
+void passageiro(Passageiro& p) {
+     for (int volta = 0; volta < 2; ++volta) {
+          mon->pegaCarona(p);
+     }
+}
+
 int main(int argc, char **argv) {
      int C, m; //C = capacidade do carro, m = no de carros
      double t; //t = taxa
@@ -20,6 +35,7 @@ int main(int argc, char **argv) {
      cout << "m = " << m << endl;
      cout << "t = " << t << endl;
      srand(time(NULL));
+     mon = new Monitor(C, m);
      priority_queue<Passageiro, vector<Passageiro>, comp_passageiro> fila;
      for (int i = 0; i < 5; ++i) {
           Passageiro x(i);
@@ -33,5 +49,6 @@ int main(int argc, char **argv) {
           fila.pop();
           cout << x.tid() << ' ' << x.golden() << ' ' << x.arrive() << endl;
      }
+     delete mon;
      return 0;
 }
