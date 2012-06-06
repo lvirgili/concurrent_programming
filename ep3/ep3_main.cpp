@@ -3,24 +3,33 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <thread>
 using namespace std;
 
 Monitor *mon;
 
 void carro(int cid) {
+     int i = 0;
      while (true) {
           mon->carrega(cid);
           mon->descarrega(cid);
+          ++i;
+          cout << "******* " << i << " *********\n";
+          if (i > 1) break;
      }
+     cout << "ACABOU\n";
 }
 
 void passageiro(Passageiro& p) {
      for (int volta = 0; volta < 2; ++volta) {
           mon->pegaCarona(p);
      }
+     cout << "Passageiro fim\n";
 }
 
 int main(int argc, char **argv) {
+     vector<thread> cars;
+     vector<thread> pass;
      int C, m; //C = capacidade do carro, m = no de carros
      double t; //t = taxa
      if (argc != 4) {
@@ -31,24 +40,24 @@ int main(int argc, char **argv) {
           m = atoi(argv[2]);
           t = strtod(argv[3], NULL);
      }
+     srand(time(NULL));
      cout << "C = " << C << endl;
      cout << "m = " << m << endl;
      cout << "t = " << t << endl;
-     srand(time(NULL));
      mon = new Monitor(C, m);
-     priority_queue<Passageiro, vector<Passageiro>, comp_passageiro> fila;
-     for (int i = 0; i < 5; ++i) {
-          Passageiro x(i);
-          sleep(1);
-          cout << x.tid() << ' ' << x.golden() << ' ' << x.arrive() << endl;
-          fila.push(x);
+     for (int i = 0; i < m; ++i) {
+          cars.push_back(thread(carro, i));
      }
-     cout << "======\n";
-     while (fila.empty() == false) {
-          Passageiro x(fila.top());
-          fila.pop();
-          cout << x.tid() << ' ' << x.golden() << ' ' << x.arrive() << endl;
+     for (int i = 0; i < 1; ++i) {
+          Passageiro p(i);
+          mon->add_passageiro();
+          pass.push_back(thread(passageiro, p));
      }
-     delete mon;
+     for (int i = 0; i < 1; ++i) {
+          pass[i].join();
+     }
+     for (int i = 0; i < m; ++i) {
+          cars[i].join();
+     }
      return 0;
 }

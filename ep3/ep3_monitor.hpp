@@ -6,14 +6,18 @@
 #include <queue>
 #include <vector>
 #include "ep3_passageiro.hpp"
+
+#include <errno.h>
+#include <cstdio>
+#include <cstring>
 using namespace std;
 
 class Monitor {
 private:
-     sem_t *entry;
+     sem_t mutex;
      priority_queue<Passageiro, vector<Passageiro>, comp_passageiro> fila_pass;
-     vector<sem_t *> pass_sems; //Semaforos privados dos Passageiros.
-     vector<sem_t *> cars_sems; //Semaforos privados dos carros.
+     vector<sem_t> pass_sems; //Semaforos privados dos Passageiros.
+     vector<sem_t> cars_sems; //Semaforos privados dos carros.
      vector<bool> moving; //Se os carros estao em movimento.
      int _np;
      int _C, _m;
@@ -27,9 +31,7 @@ private:
      void signal();
      void signal_all();
      void minrank(int&);
-     void monitor_entry();
-     void monitor_exit();
-     void print(string);
+     void printInfo(string);
 
 public:
      Monitor(int, int);
@@ -38,4 +40,6 @@ public:
      void carrega(int);
      void descarrega(int);
      void add_passageiro();
+     void monitor_entry();
+     void monitor_exit();
 };
