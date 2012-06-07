@@ -6,6 +6,12 @@ Passageiro::Passageiro(int tid) {
      time(&_arrive);
 }
 
+Passageiro::Passageiro(int tid, bool golden) {
+     _tid = tid;
+     _golden = golden;
+     time(&_arrive);
+}
+
 Passageiro::Passageiro(int tid, bool golden, time_t t) {
      _tid = tid;
      _golden = golden;

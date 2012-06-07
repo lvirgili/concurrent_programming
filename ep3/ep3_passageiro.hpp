@@ -12,6 +12,7 @@ private:
 
 public:
      Passageiro(int);
+     Passageiro(int, bool);
      Passageiro(int, bool, time_t);
      Passageiro(const Passageiro&);
      int tid() const;
