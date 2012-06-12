@@ -1,0 +1,7 @@
+*.tex
+*.pdf
+*.o
+ep2
+saida.txt
+README.md
+*.tar.gz

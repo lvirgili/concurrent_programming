@@ -4,6 +4,8 @@
 #include <ctime>
 #include <iostream>
 
+//Classe que representa o passageiro.
+//So tem o id, se tem um bilhete dourado e quando ele chegou.
 class Passageiro {
 private:
      int _tid;
@@ -21,6 +23,7 @@ public:
      void arrive(time_t);
 };
 
+//Como ordenar a fila.
 struct comp_passageiro {
      bool operator()(const Passageiro& a, const Passageiro& b) const {
           if (a.golden() == true && b.golden() == false) {
@@ -29,12 +32,6 @@ struct comp_passageiro {
           if (a.golden() == false && b.golden() == true) {
                return true;
           }
-          return a.arrive() > b.arrive();
-     }
-};
-
-struct comp_to_print {
-     bool operator()(const Passageiro&a, const Passageiro& b) const {
           return a.arrive() > b.arrive();
      }
 };

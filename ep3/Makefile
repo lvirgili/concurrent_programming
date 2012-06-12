@@ -1,6 +1,6 @@
 CC = g++
 FLAGS = -std=c++0x -Wall -pthread -g
-LMATH = -lm
+LMATH = -lm -lrt
 
 OBJS = ep3_passageiro.o ep3_monitor.o ep3_main.o
 TARG = ep3

@@ -1,8 +1,11 @@
 #include "ep3_passageiro.hpp"
 
+//Aqui eu so implemento os construtores. Um passageiro tem 20% de
+//probabilidade de ganhar um bilhete dourado.
+
 Passageiro::Passageiro(int tid) {
      _tid = tid;
-     _golden = (rand()%50 <= 5) ? true : false;
+     _golden = (rand()%50 < 10) ? true : false;
      time(&_arrive);
 }
 

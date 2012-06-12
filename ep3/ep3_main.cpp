@@ -7,30 +7,17 @@
 using namespace std;
 
 Monitor *mon;
-int np = 3;
+int np = 6;
+double sleep_time = 2; //Quanto tempo demora um paseio.
 
+//Os carros carregam...
 void carro(int cid) {
-     int i = 0;
-     while (true) {
-          //if (i == 2) break;
-          mon->carrega(cid);
-          mon->descarrega(cid);
-          ++i;
-          //if (i == 2) break;
-     }
+     mon->carrega(cid);
 }
 
+//... os passageiros sao carregados.
 void passageiro(Passageiro& p) {
-     for (int volta = 0; volta < 2; ++volta) {
-          mon->pegaCarona(p);
-     }
-     mon->monitor_entry();
-     cout << "Passageiro " << p.tid() << " foi embora.\n";
-     mon->monitor_exit();
-}
-
-void test(int x) {
-     mon->monitor_print(x);
+     mon->pegaCarona(p);
 }
 
 int main(int argc, char **argv) {
@@ -46,23 +33,17 @@ int main(int argc, char **argv) {
           m = atoi(argv[2]);
           t = strtod(argv[3], NULL);
      }
+     t *= 100;
      srand(time(NULL));
-     t = t+1;
      mon = new Monitor(C, m);
      for (int i = 0; i < m; ++i) {
           cars.push_back(thread(carro, i));
      }
      for (int i = 0; i < np; ++i) {
-          if (i == 0) {
-               Passageiro p(i, true);
-               mon->add_passageiro();
-               pass.push_back(thread(passageiro, p));
-
-          } else {
-               Passageiro p(i);
-               mon->add_passageiro();
-               pass.push_back(thread(passageiro, p));
-          }
+          Passageiro p(i);
+          mon->add_passageiro();
+          pass.push_back(thread(passageiro, p));
+          sleep(t * sleep_time);
      }
      for (int i = 0; i < np; ++i) {
           pass[i].join();
@@ -71,15 +52,7 @@ int main(int argc, char **argv) {
           cars[i].join();
      }
 
-     // mon = new Monitor(1,1);
-     // vector<thread> t;
-     // for (int i = 0; i < 5; ++i) {
-     //      t.push_back(thread(test, i));
-     // }
-     // for (int i = 0; i < 5; ++i) {
-     //      t[i].join();
-     // }
-
      delete mon;
+
      return 0;
 }
